@@ -4,6 +4,14 @@
     <color name="colorPrimaryDark">#349030</color>
     <color name="colorAccent">#ffffff</color>
 
+    <!--colors for profile-->
+    <color name="profilePrimaryDark">#FF3B30</color>
+    <color name="profileAccentColor">#F7F7F7</color>
+    <color name="whiteTextColor">#fff</color>
+    <color name="profileBackground">#fff</color>
+    <color name="blackTextColor">#000</color>
+    <color name="profileEditTextColor">#707070</color>
+
     <color name="facebookColor">#295294</color>
     <color name="googleColor">#bf2127</color>
     <color name="backgroundColor">#96a4f3</color>

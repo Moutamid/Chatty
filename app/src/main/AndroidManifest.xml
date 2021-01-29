@@ -33,6 +33,9 @@
             android:name=".ChattyViewerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"/>
         <activity android:name=".UserNameActivity"/>
+        <activity
+            android:name=".DeveloperInfoActivity"
+            android:theme="@style/AppTheme.ProfileTheme"/>
     </application>
 
 </manifest>

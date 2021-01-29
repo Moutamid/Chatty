@@ -74,7 +74,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View view) {
                 if (mChatName.get(position).equals("Chatty")) {
-                    ((TabbedActivity) mContext).finish();
+//                    ((TabbedActivity) mContext).finish();
                     mContext.startActivity(new Intent(mContext, ChattyViewerActivity.class));
                 } else {
                     Toast.makeText(mContext, mChatName.get(position) + " Coming Soon..", Toast.LENGTH_SHORT).show();
