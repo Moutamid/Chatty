@@ -7,11 +7,39 @@
     android:background="@color/white"
     tools:context=".ChattyViewerActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/back_btn_chatty_viewer"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="Chatty"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/tabBtn"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="55dp"
         android:background="@color/darkBlue"
         android:text="Online"
         android:textColor="@color/white" />
@@ -20,6 +48,7 @@
         android:id="@+id/recyclerViewMessages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="55dp"
         android:layout_marginBottom="55dp"
         android:background="@color/white"
         android:clipToPadding="false"
@@ -28,21 +57,21 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="65dp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
             android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/right_background"
             android:elevation="2dp"
             android:padding="8dp"
@@ -73,13 +102,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
             android:layout_marginStart="5dp"
-            android:layout_toLeftOf="@+id/addBtn"
+            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_toStartOf="@+id/addBtn"
+            android:layout_toLeftOf="@+id/addBtn"
             android:background="@drawable/back_addtask"
             android:elevation="5dp">
 
@@ -87,10 +116,10 @@
                 android:id="@+id/editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
                 android:background="@color/white"
                 android:hint="Type a Message"
                 android:inputType="textMultiLine|textPersonName"

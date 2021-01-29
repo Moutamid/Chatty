@@ -4,20 +4,53 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/leftText"
-        android:layout_width="wrap_content"
+    <!-- LEFT MESSAGE-->
+    <RelativeLayout
+        android:id="@+id/leftTextLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/left_background"
-        android:elevation="2dp"
-        android:padding="8dp"
-        android:text="Hello this is me!!"
-        android:textColor="#212121" />
+        android:clipToPadding="false"
+        android:paddingEnd="60dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="60dp"
+        android:paddingStart="15dp"
+        android:paddingVertical="10dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/chatty_girl" />
+
+        <TextView
+            android:id="@+id/leftText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/avatar"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@+id/avatar"
+            android:layout_toRightOf="@+id/avatar"
+            android:paddingBottom="4dp"
+            android:text="Chatty" />
+
+        <TextView
+            android:id="@+id/leftText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/leftText1"
+            android:layout_alignStart="@+id/leftText1"
+            android:layout_below="@+id/leftText1"
+            android:background="@drawable/left_background"
+            android:elevation="2dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:text="How are you doing?"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
 
 
     <LinearLayout

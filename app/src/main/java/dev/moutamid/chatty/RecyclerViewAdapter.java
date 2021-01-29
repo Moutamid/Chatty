@@ -12,8 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-// TODO: DOWNLOAD THIS LIBRARY import com.github.library.bubbleview.BubbleTextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+// TODO: DOWNLOAD THIS LIBRARY import com.github.library.bubbleview.BubbleTextView;
 
 // TODO: DOWNLOAD THIS LIBRARY import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -61,7 +61,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderChats holder, final int position) {
 
-		sharedPreferences = mContext.getSharedPreferences("moutamid.spdf.com.chatty", Context.MODE_PRIVATE);
+		sharedPreferences = mContext.getSharedPreferences("dev.moutamid.chatty", Context.MODE_PRIVATE);
 	
         int image = Integer.parseInt(mChatImage.get(position));
 

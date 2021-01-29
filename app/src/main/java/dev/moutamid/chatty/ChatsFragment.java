@@ -27,7 +27,7 @@ public class ChatsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.chats_fragment, container, false);
-        sharedPreferences = getActivity().getSharedPreferences("moutamid.spdf.com.chatty", Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("dev.moutamid.chatty", Context.MODE_PRIVATE);
 
         initImageBitmaps();
 

@@ -22,32 +22,36 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+
 import ai.api.AIListener;
 import ai.api.AIServiceException;
 import ai.api.android.AIConfiguration;
 import ai.api.android.AIDataService;
 import ai.api.android.AIService;
+import ai.api.model.AIError;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChattyViewerActivity extends AppCompatActivity implements AIListener {
+public class ChattyViewerActivity extends AppCompatActivity implements AIListener{
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapterMessages adapter;
@@ -84,6 +88,24 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatty_viewer);
+
+        initViews();
+
+        initAiListener();
+
+    }
+
+    private void initAiListener() {
+        final AIConfiguration config = new AIConfiguration("9a656058c9ba4eed9ce60bdb2ad6613b",
+                AIConfiguration.SupportedLanguages.English,
+                AIConfiguration.RecognitionEngine.System);
+        aiService = AIService.getService(this, config);
+        aiService.setListener(this);
+        aiDataService = new AIDataService(this, config);
+        aiRequest = new AIRequest();
+    }
+
+    private void initViews() {
         editText = findViewById(R.id.editText);
         addBtn = findViewById(R.id.addBtn);
         editTextLayout = findViewById(R.id.edittextLayout);
@@ -95,7 +117,8 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
         tabBtn = findViewById(R.id.tabBtn);
 
         handler = new Handler();
-        sharedPreferences = this.getSharedPreferences("moutamid.spdf.com.chatty", Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("dev.moutamid.chatty", Context.MODE_PRIVATE);
+
         String msgStatus = sharedPreferences.getString("msgStatus", "Error");
 
         // Changing the color of EditText bar
@@ -104,7 +127,6 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
             editTextLayout.setBackgroundColor(getResources().getColor(R.color.lighterGrey));
 
         }
-
 
         if (msgStatus.equals("true")) {
             myMsgStatusImg.setImageResource(R.drawable.boy);
@@ -115,25 +137,27 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
         ref = FirebaseDatabase.getInstance().getReference().child(userName);
         ref.keepSynced(true);
 
-        final AIConfiguration config = new AIConfiguration("9a656058c9ba4eed9ce60bdb2ad6613b",
-                AIConfiguration.SupportedLanguages.English,
-                AIConfiguration.RecognitionEngine.System);
-        aiService = AIService.getService(this, config);
-        aiService.setListener(this);
-        aiDataService = new AIDataService(this, config);
-        aiRequest = new AIRequest();
+        addBtn.setOnClickListener(addBtnClickListener());
 
-        final Bitmap sendImg = BitmapFactory.decodeResource(getResources(), R.drawable.ic_send_white_24dp);
-
-        addBtn.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.back_btn_chatty_viewer).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
+    }
+
+    private View.OnClickListener addBtnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Bitmap sendImg = BitmapFactory.decodeResource(getResources(), R.drawable.ic_send_white_24dp);
                 message = editText.getText().toString().trim();
 
-                ImageViewAnimatedChange(ChattyViewerActivity.this, fab_img, sendImg);
+                imageViewAnimatedChange(ChattyViewerActivity.this, fab_img, sendImg);
 
-                if (!message.equals("") && isOnline() && !TextUtils.isEmpty(message)) {
+                if (isOnline() && !TextUtils.isEmpty(message)) {
 
                     msgUser.add("user");
                     msgText.add(message);
@@ -154,7 +178,7 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
                     }, 3100);
 
 
-                } else if (message.equals("")) {
+                } else if (TextUtils.isEmpty(message)) {
 
                     editText.setError("Please add a message!");
                     editText.requestFocus();
@@ -163,69 +187,116 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
                 } else if (!isOnline()) {
                     Toast.makeText(ChattyViewerActivity.this, "You are not online!", Toast.LENGTH_SHORT).show();
                 }
-
-
             }
-        });
+        };
+    }
+
+    @Override
+    public void onResult(AIResponse result) {
+        // Not using this method now
+    }
+
+    @Override
+    public void onError(AIError error) {
 
     }
 
-    private void uploadMessageAndGetResponse(String message) {
+    @Override
+    public void onAudioLevel(float level) {
 
-        if (!TextUtils.isEmpty(message)) {
+    }
 
-            aiRequest.setQuery(message);
+    @Override
+    public void onListeningStarted() {
+
+    }
+
+    @Override
+    public void onListeningCanceled() {
+
+    }
+
+    @Override
+    public void onListeningFinished() {
+
+    }
+
+    private class uploadMessageAndGetResponse extends AsyncTask<AIRequest, Void, AIResponse>{
+
+        String message1;
+
+        public uploadMessageAndGetResponse(String message1) {
+            this.message1 = message1;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
             tabBtn.setText("Typing...");
 
-            ChatMessage chatMessage = new ChatMessage(message, "user");
+            aiRequest.setQuery(message1);
+
+            ChatMessage chatMessage = new ChatMessage(message1, "user");
             ref.child("chat").push().setValue(chatMessage);
+        }
 
-            new AsyncTask<AIRequest, Void, AIResponse>() {
+        @Override
+        protected AIResponse doInBackground(AIRequest... aiRequests) {
+            try {
 
-                @Override
-                protected AIResponse doInBackground(AIRequest... aiRequests) {
-                    final AIRequest request = aiRequests[0];
-                    try {
+                AIResponse response = aiDataService.request(aiRequest);
 
-                        final AIResponse response = aiDataService.request(aiRequest);
+                return response;
 
-                        return response;
+            } catch (AIServiceException e) {
+                e.printStackTrace();
+                Log.d("ChattyViewerActivity", "doInBackground: catch" + e.getMessage());
+            }
 
-                    } catch (AIServiceException e) {
-                        e.printStackTrace();
-                        Log.d("MainActivity", " moutamid.spdf.com.chatty: doInBackground: AIResposne Error!");
-                    }
-                    return null;
-                }
+            return null;
+        }
 
-                @Override
-                protected void onPostExecute(AIResponse response) {
-                    if (response != null) {
+        @Override
+        protected void onPostExecute(AIResponse response) {
+            super.onPostExecute(response);
 
-                        Result result = response.getResult();
-                        String reply = result.getFulfillment().getSpeech();
+            if (response != null) {
 
-                        tabBtn.setText("Online");
+                Result result = response.getResult();
+                String reply = result.getFulfillment().getSpeech();
 
-                        msgUser.add("bot");
-                        msgText.add(reply);
+                tabBtn.setText("Online");
 
-                        CircleImageViewAnimatedChange(ChattyViewerActivity.this, myMsgStatusImg, imgBoy);
+                msgUser.add("bot");
+                msgText.add(reply);
 
-                        initRecyclerView();
+                CircleImageViewAnimatedChange(ChattyViewerActivity.this, myMsgStatusImg, imgBoy);
 
-                        ChatMessage chatMessage = new ChatMessage(reply, "bot");
-                        ref.child("chat").push().setValue(chatMessage);
-                        sharedPreferences.edit().putString("chattyLastMsg", reply).apply();
-                    }
-                }
-            }.execute(aiRequest);
-        } else if (message.equals("")) {
+                initRecyclerView();
 
-            editText.setError("Please add a message!");
-            editText.requestFocus();
+                ChatMessage chatMessage = new ChatMessage(reply, "bot");
+                ref.child("chat").push().setValue(chatMessage);
+                sharedPreferences.edit().putString("chattyLastMsg", reply).apply();
 
+                //Result result = response.getResult();
+                //
+                //        String message = result.getResolvedQuery();
+                //        ChatMessage chatMessage0 = new ChatMessage(message, "user");
+                //        ref.child("chat").push().setValue(chatMessage0);
+                //
+                //        String reply = result.getFulfillment().getSpeech();
+                //
+                //        msgUser.add("bot");
+                //        msgText.add(reply);
+                //        initRecyclerView();
+                //
+                //        ChatMessage chatMessage = new ChatMessage(reply, "bot");
+                //        ref.child("chat").push().setValue(chatMessage);
+                //
+                //        Toast.makeText(this, "On Result Executed!", Toast.LENGTH_LONG).show();
+
+            }else Toast.makeText(ChattyViewerActivity.this, "No response!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -253,7 +324,7 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
         return false;
     }
 
-    public void ImageViewAnimatedChange(Context c, final ImageView v, final Bitmap new_image) {
+    public void imageViewAnimatedChange(Context c, final ImageView v, final Bitmap new_image) {
         final Animation anim_out = AnimationUtils.loadAnimation(c, R.anim.zoom_out);
         final Animation anim_in = AnimationUtils.loadAnimation(c, R.anim.zoom_in);
         anim_out.setAnimationListener(new Animation.AnimationListener() {
@@ -356,54 +427,13 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
     }
 
     @Override
-    public void onResult(ai.api.model.AIResponse response) {
-
-        Result result = response.getResult();
-
-        String message = result.getResolvedQuery();
-        ChatMessage chatMessage0 = new ChatMessage(message, "user");
-        ref.child("chat").push().setValue(chatMessage0);
-
-        String reply = result.getFulfillment().getSpeech();
-
-        msgUser.add("bot");
-        msgText.add(reply);
-        initRecyclerView();
-
-        ChatMessage chatMessage = new ChatMessage(reply, "bot");
-        ref.child("chat").push().setValue(chatMessage);
-
-        Toast.makeText(this, "On Result Executed!", Toast.LENGTH_LONG).show();
-
-    }
-
-    @Override
-    public void onError(ai.api.model.AIError error) {
-    }
-
-    @Override
-    public void onAudioLevel(float level) {
-    }
-
-    @Override
-    public void onListeningStarted() {
-    }
-
-    @Override
-    public void onListeningCanceled() {
-    }
-
-    @Override
-    public void onListeningFinished() {
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
-
+//        Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
         ref.child("chat").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Toast.makeText(ChattyViewerActivity.this, "ondatachange", Toast.LENGTH_SHORT).show();
 
                 msgUser.clear();
                 msgText.clear();
@@ -425,9 +455,7 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                Log.i("Database Error", databaseError.getMessage());
-                Log.i("Database Error", databaseError.getDetails());
-                Log.d("MainActivity", "onCancelled: " + databaseError.getMessage());
+                Toast.makeText(ChattyViewerActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -437,6 +465,7 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
         startActivity(new Intent(ChattyViewerActivity.this, TabbedActivity.class));
     }
 
@@ -472,7 +501,8 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
             @Override
             public void run() {
                 myMsgStatusImg.setImageDrawable(getResources().getDrawable(R.drawable.boy));
-                uploadMessageAndGetResponse(message);
+                uploadMessageAndGetResponse messageAndGetResponse = new uploadMessageAndGetResponse(message);
+                messageAndGetResponse.execute(aiRequest);
                 sharedPreferences.edit().putString("msgStatus", "true").apply();
             }
         }, 1000);
@@ -501,14 +531,14 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
                 holder.rightText.setText(msgText.get(position));
 
                 holder.rightText.setVisibility(View.VISIBLE);
-                holder.leftText.setVisibility(View.GONE);
+                holder.leftTextLayout.setVisibility(View.GONE);
 
             } else {
 
                 holder.leftText.setText(msgText.get(position));
 
                 holder.rightText.setVisibility(View.GONE);
-                holder.leftText.setVisibility(View.VISIBLE);
+                holder.leftTextLayout.setVisibility(View.VISIBLE);
             }
 
         }
@@ -521,14 +551,14 @@ public class ChattyViewerActivity extends AppCompatActivity implements AIListene
         public class ViewHolderMessages extends RecyclerView.ViewHolder {
 
             TextView leftText, rightText;
-            LinearLayout rightTextLayout;
+            RelativeLayout leftTextLayout;
 
             public ViewHolderMessages(@NonNull View v) {
                 super(v);
 
                 leftText = (TextView) v.findViewById(R.id.leftText);
                 rightText = (TextView) v.findViewById(R.id.rightText);
-                rightTextLayout = v.findViewById(R.id.rightTextLayout);
+                leftTextLayout = v.findViewById(R.id.leftTextLayout);
             }
         }
 

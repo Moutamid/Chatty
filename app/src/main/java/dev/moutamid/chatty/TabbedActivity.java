@@ -3,11 +3,10 @@ package dev.moutamid.chatty;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
-import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -22,7 +21,7 @@ public class TabbedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabbed);
 
-        sharedPreferences = TabbedActivity.this.getSharedPreferences("moutamid.spdf.com.chatty", Context.MODE_PRIVATE);
+        sharedPreferences = TabbedActivity.this.getSharedPreferences("dev.moutamid.chatty", Context.MODE_PRIVATE);
 
         String userName = sharedPreferences.getString("userName", "Error");
 

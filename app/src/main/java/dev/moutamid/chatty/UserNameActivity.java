@@ -12,9 +12,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 public class UserNameActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
@@ -25,15 +22,15 @@ public class UserNameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_name);
-        sharedPreferences = UserNameActivity.this.getSharedPreferences("moutamid.spdf.com.chatty", Context.MODE_PRIVATE);
+        sharedPreferences = UserNameActivity.this.getSharedPreferences("dev.moutamid.chatty", Context.MODE_PRIVATE);
         userNameBtn = findViewById(R.id.userNameSubmitBtn);
         userNameEditText = findViewById(R.id.userNameEditText);
 
         userNameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-                String name = userNameEditText.getText().toString().trim() + time;
+             //   String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+                String name = userNameEditText.getText().toString().trim();// + time;
 
                 if (!TextUtils.isEmpty(name)) {
                     sharedPreferences.edit().putString("userName", name).apply();
