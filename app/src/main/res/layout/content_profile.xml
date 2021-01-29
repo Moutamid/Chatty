@@ -185,7 +185,7 @@
 
             <TextView
                 style="@style/profileDetailsMiniText"
-                android:text="All the icons and profile pictures are under free to use license from Flaticon.com" />
+                android:text="All the icons and profile pictures are under free to use license from (FreePik) Flaticon.com" />
 
         </LinearLayout>
 
