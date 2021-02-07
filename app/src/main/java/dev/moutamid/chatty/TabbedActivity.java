@@ -44,7 +44,7 @@ public class TabbedActivity extends AppCompatActivity {
 
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new ChatsFragment(), "Chats");
-        adapter.addFragment(new StatusFragment(), "Status");
+//        adapter.addFragment(new StatusFragment(), "Status");
         adapter.addFragment(new InfoFragment(), "info");
 
         viewPager.setOffscreenPageLimit(3);
